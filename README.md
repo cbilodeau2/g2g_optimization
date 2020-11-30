@@ -1,2 +1,3 @@
 # g2g_optimization
-graph-to-graph translation using hierarchical graph structure with iterations
+
+This repository implements the Hierarchical Graph Neural Network (HGNN) for graph-to-graph translation with and without iterative stochastic augmentation. These approaches can be used to 1) train a model to translate a starting molecule into a related molecule optimized with respect to a target property and 2) generate a library of molecules for identifying a molecule optimized with respect to a target property. In addition to the previously published methods, this repository also includes a molecule pairing algorithm and support for incorporating additional secondary constraints. This repository is intended to be used along with ChemProp for molecular property prediction \textbf{(link)}.
