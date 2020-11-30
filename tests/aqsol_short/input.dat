@@ -1,0 +1,35 @@
+## ARGS FILE g2g_optimization
+
+## Pair Generation Parameters:
+target = Solubility                 # Title of column in input file
+cutoff = 0.2 #0.8                        # Minimum improvement required to pair x with y
+sample_n = 2 #20
+remove_tails = False                # Remove top and bottom 1/8 of distribution
+
+## Tensor Generation Parameters:
+batch_size = 16
+ncpu = 8
+
+## Training Parameters:
+load_dir = None
+load_epoch = -1
+rnn_type = LSTM
+hidden_size = 270
+embed_size = 270
+latent_size = 4
+depthT = 20
+depthG = 20
+diterT = 1
+diterG = 3
+dropout = 0.0
+lr = 1e-3
+clip_norm = 20.0
+beta = 0.3
+epoch = 12 #10
+anneal_rate = 0.9
+print_iter = 50
+save_iter = -1
+
+## Iteration Parameters:
+fold_path = /data/rsg/chemistry/cbilod/hgraph2graph/predictors/solubility_10-2-20 #path to chemprop model associated with target improvement
+
