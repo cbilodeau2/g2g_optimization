@@ -34,9 +34,15 @@ python evaluate_test.py --test tests/aqsol_short/test.csv --vocab save_dir/input
 ### Evaluate model performance using a given test set:
 Alternatively, in addition to translating a given test set, you can calculate model performance statistics by referencing a previously trained ChemProp model. Using the output of the training example (note: you need a separate ChemProp model to run this):
 
-python evaluate_test_chemprop.py --test tests/aqsol_short/test.csv --model model.10 --checkpoint_path save_dir --args_file tests/aqsol_short/input.dat
+```
+python evaluate_test_chemprop.py --test tests/aqsol_short/test.csv --model model.10 --checkpoint_path save_dir --args_file tests/aqsol_short/input.dat --fold_path <path to ChemProp model> --chemprop_path <path to ChemProp predict.py script>
+```
 
 ### Evaluate model performance based on subsets of input dataset:
+Alternatively, it may be useful to calculate model performance generally on subsets of the training set. evaluate_chemprop.py can be used to generate 5 test sets that are subsets of the training set: the top 25 molecules with respect to the target, the bottom 25 molecules with respect to the target, and molecules falling around the 25th, 50th, and 75th percentiles of the target distribution. evaluate_chemprop.py then generates separate statistitcs for each of these test sets. Using the output of the training example (note: you need a separate ChemProp model to run this):
 
+```
+python evaluate_chemprop.py --model model.10 --checkpoint_path save_dir --args_file tests/aqsol_short/input.dat --fold_path <path to ChemProp model> --chemprop_path <path to ChemProp predict.py script>
+```
 
 
