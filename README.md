@@ -22,7 +22,7 @@ In addition to simply training the model, you can use the model to translate eve
 
 ```
 mkdir save_dir
-python train.py --data_path tests/aqsol_short --args_file test/aqsol_short/input.dat --save_dir save_dir --n_iterations 2
+python train_iterations.py --data_path tests/aqsol_short --args_file test/aqsol_short/input.dat --save_dir save_dir --n_iterations 2
 ```
 ## Model Evaluation:
 ### Translate a given molecule list:
