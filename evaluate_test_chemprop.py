@@ -18,7 +18,7 @@ parser.add_argument('--vocab',type=str,default=None)
 parser.add_argument('--output_file',type=str,default=None)
 parser.add_argument('--stats_file',type=str,default=None)
 parser.add_argument('--checkpoint_path',type=str,default=None)
-parser.add_argument('--fold_path',default='/data/rsg/chemistry/cbilod/hgraph2graph/predictors/solubility_10-2-20/')
+parser.add_argument('--fold_path',default='predictors/chemprop_aqsol/')
 parser.add_argument('--args_file',type=str, default=None) #Without an args file, many parameters will revert to default
 parser.add_argument('--num_decode',type=int, default=20)
 parser.add_argument('--seed',type=int, default=1)

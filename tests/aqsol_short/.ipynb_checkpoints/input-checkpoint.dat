@@ -31,5 +31,5 @@ print_iter = 50
 save_iter = -1
 
 ## Iteration Parameters:
-fold_path = /data/rsg/chemistry/cbilod/hgraph2graph/predictors/solubility_10-2-20 #path to chemprop model associated with target improvement
+fold_path = predictors/chemprop_aqsol/ #path to chemprop model associated with target improvement
 
