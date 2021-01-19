@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import pandas as pd
 
-from chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader,MoleculeDataset
+#from chemprop.data import get_data, get_data_from_smiles, MoleculeDataLoader,MoleculeDataset
 from chemprop.utils import load_args, load_checkpoint, load_scalers, makedirs, timeit
 from chemprop.train.predict import predict
 
