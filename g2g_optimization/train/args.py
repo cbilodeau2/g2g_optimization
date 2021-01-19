@@ -23,7 +23,7 @@ def read_args(args_file):
     if 'sample_n' in list(args.keys()):
         args['sample_n'] = int(args['sample_n'])
     if 'remove_tails' in list(args.keys()):
-        args['remove_tails'] = bool(args['remove_tails'])
+        args['remove_tails'] = eval(args['remove_tails'])
     if 'batch_size' in list(args.keys()):
         args['batch_size'] = int(args['batch_size'])    
     if 'ncpu' in list(args.keys()):
@@ -63,5 +63,24 @@ def read_args(args_file):
         args['print_iter'] = int(args['print_iter'])
     if 'save_iter' in list(args.keys()):
         args['save_iter'] = int(args['save_iter'])
-
+    if 'min_mol_wt' in list(args.keys()):
+        args['min_mol_wt'] = float(args['min_mol_wt'])
+    if 'cutoff_iterations' in list(args.keys()):
+        args['cutoff_iterations'] = float(args['cutoff_iterations'])
+    if 'num_decode' in list(args.keys()):
+        args['num_decode'] = int(args['num_decode'])        
+    if 'sa_constraint' in list(args.keys()):
+        args['sa_constraint'] = eval(args['sa_constraint'])
+    if 'sa_cutoff' in list(args.keys()):
+        args['sa_cutoff'] = float(args['sa_cutoff'])       
+    if 'pairing_method' in list(args.keys()):
+        args['pairing_method'] = args['pairing_method']
+    if 'n_clusters' in list(args.keys()):
+        args['n_clusters'] = int(args['n_clusters'])
+    else:
+        args['n_clusters'] = None
+    if 'tan_threshold' in list(args.keys()):
+        args['tan_threshold'] = float(args['tan_threshold'])  
+    else:
+        args['tan_threshold'] = None
     return args

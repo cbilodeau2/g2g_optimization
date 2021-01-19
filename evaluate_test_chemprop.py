@@ -23,6 +23,7 @@ parser.add_argument('--args_file',type=str, default=None) #Without an args file,
 parser.add_argument('--num_decode',type=int, default=20)
 parser.add_argument('--seed',type=int, default=1)
 parser.add_argument('--chemprop_path',type=str, default='/data/rsg/chemistry/cbilod/chemprop/')
+parser.add_argument('--solvent',type=str, default=None)
 
 args = parser.parse_args()
 
@@ -47,8 +48,11 @@ decode(args.test,args.vocab,args.model,args.output_file,args_file,
         num_decode=args.num_decode, ## Will not come from run input
         seed=args.seed)
 
-stats,_ = evaluate_chemprop(args.output_file,fold_path=args.fold_path,chemprop_path=args.chemprop_path)
-
+if args.solvent == None:
+    stats,_ = evaluate_chemprop(args.output_file,fold_path=args.fold_path,chemprop_path=args.chemprop_path)
+else:
+    stats,_ = evaluate_chemprop_sol(out_file,solvent=args.solvent,fold_path=args.fold_path,chemprop_path=args.chemprop_path)
+    
 with open(args.stats_file, 'wb') as f:
     pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
 

@@ -6,6 +6,8 @@ from .nnutils import *
 from .mol_graph import MolGraph
 from .rnn import GRU, LSTM
 
+import numpy as np
+
 class MPNEncoder(nn.Module):
 
     def __init__(self, rnn_type, input_size, node_fdim, hidden_size, depth, dropout):
@@ -126,6 +128,7 @@ class HierMPNEncoder(nn.Module):
         return self.W_root(node_hiddens)
 
     def forward(self, tree_tensors, graph_tensors):
+#         print('graph shape:',np.shape(graph_tensors[0]),np.shape(graph_tensors[1]),np.shape(graph_tensors[2]),np.shape(graph_tensors[3]),np.shape(graph_tensors[4]))
         tensors = self.embed_graph(graph_tensors)
         hatom,_ = self.graph_encoder(*tensors)
 

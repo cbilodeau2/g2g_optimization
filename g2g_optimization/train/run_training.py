@@ -9,7 +9,10 @@ from g2g_optimization.train.preprocess import generate_tensors
 from g2g_optimization.train.gnn_train import gnn_train
 from g2g_optimization.train.args import read_args
 
-def run_training(data_path='data/solvation_open',save_dir='checkpoints',args_file=None,chemprop_path='/data/rsg/chemistry/cbilod/chemprop/',constraint_file=None,input_file=None,hyperparams=None):
+def run_training(data_path='data/solvation_open',save_dir='checkpoints',args_file=None,chemprop_path='/data/rsg/chemistry/cbilod/chemprop/',
+                 constraint_file=None,
+                 input_file=None,
+                 hyperparams=None):
 
     args = {}
     if args_file!=None:
@@ -34,6 +37,7 @@ def run_training(data_path='data/solvation_open',save_dir='checkpoints',args_fil
     mol_file = os.path.join(input_dir,'mols.txt')
     vocab_file = os.path.join(input_dir,'vocab.txt')
     train_file = os.path.join(input_dir,'train_pairs.txt')
+    adjacency_file = os.path.join(input_dir,'adjacency.pkl')
 
     if not os.path.isdir(os.path.join(save_dir,'tensors')):
         os.mkdir(os.path.join(save_dir,'tensors'))
@@ -51,7 +55,7 @@ def run_training(data_path='data/solvation_open',save_dir='checkpoints',args_fil
     
     f.write('Starting Pair Generation \n')
     start = time.time()
-    generate_pairs(input_file, train_file, mol_file,args,chemprop_path,constraint_file)
+    generate_pairs(input_file, train_file, mol_file,args,chemprop_path,constraint_file,adjacency_file)
     end = time.time()
     f.write('Ending Pair Generation \n')
     f.write('Time Elapsed: '+str(end-start)+'\n')
@@ -75,6 +79,7 @@ def run_training(data_path='data/solvation_open',save_dir='checkpoints',args_fil
     
     f.write('Starting Model Training \n')
     start = time.time()
+    print(args)
     gnn_train(tensor_dir,vocab_file,model_dir,args)
     end = time.time()
     f.write('Ending Model Training \n')

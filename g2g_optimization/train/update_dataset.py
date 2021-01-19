@@ -7,6 +7,8 @@ from chemprop.data.scaffold import generate_scaffold
 from rdkit.Chem.Descriptors import ExactMolWt
 from rdkit import Chem
 
+from g2g_optimization.train.tanimoto import tan_adjacency,adjacency_clusters
+
 
 def apply_screen(data,col_name,selection_type,selection_thresh,keep):
     data = data.sort_values(col_name,ascending=True)
@@ -37,7 +39,10 @@ def update_dataset(gen_evaluated,
                    selection_type1=None,
                    selection_thresh1=None,
                    keep1=None,
-                   min_mol_wt=50): #(g/mol)
+                   min_mol_wt=50, #(g/mol)
+                   pairing_method='bemis_murcko',
+                   n_clusters=None,
+                   tan_threshold=None): 
 
     paired = pd.read_csv(gen_evaluated)
 
@@ -52,9 +57,21 @@ def update_dataset(gen_evaluated,
     paired = paired[paired['MolWt2']>min_mol_wt]
 
     # Remove molecules outside scaffold
-    paired['Scaffold1'] = paired['Mol1'].apply(generate_scaffold)
-    paired['Scaffold2'] = paired['Mol2'].apply(generate_scaffold)
-    paired = paired[paired['Scaffold1']==paired['Scaffold2']]
+    if pairing_method=='bemis_murcko':
+        paired['Scaffold1'] = paired['Mol1'].apply(generate_scaffold)
+        paired['Scaffold2'] = paired['Mol2'].apply(generate_scaffold)
+        paired = paired[paired['Scaffold1']==paired['Scaffold2']]
+    elif pairing_method=='tanimoto':
+        mol_list = pd.concat((paired[['Mol1']].rename(columns={'Mol1':'SMILES'}),paired[['Mol2']].rename(columns={'Mol2':'SMILES'}))).drop_duplicates()
+        adj = tan_adjacency(pd.DataFrame(mol_list))
+        labels = adjacency_clusters(adj,n_clusters,threshold)
+        
+        mol_list['cluster'] = labels
+        paired['Scaffold1'] = paired['Mol1'].apply(lambda x: mol_list[mol_list['SMILES']==x]['cluster'].values[0])
+        paired['Scaffold2'] = paired['Mol2'].apply(lambda x: mol_list[mol_list['SMILES']==x]['cluster'].values[0])
+        paired = paired[paired['Scaffold1']==paired['Scaffold2']]
+    else:
+        raise Exception('Unsupported pairing option:',pairing_method)
 
     # Make labeled dataset for input into next iteration:
     x_labeled = paired[['Mol1','Target1']].rename(columns={'Mol1':'SMILES','Target1':target})

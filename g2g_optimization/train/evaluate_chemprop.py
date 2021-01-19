@@ -66,9 +66,9 @@ def evaluate_chemprop(decoded_path,fold_path,chemprop_path):
     data[0].to_csv(os.path.join(temp_folder,'col1.csv'),index=False)
     data[1].to_csv(os.path.join(temp_folder,'col2.csv'),index=False)
     
-    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col1.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col1.csv'))
+    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col1.csv')+' --batch_size 16 --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col1.csv'))
     
-    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col2.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col2.csv'))
+    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col2.csv')+' --batch_size 16 --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col2.csv'))
 
     preds1 = pd.read_csv(os.path.join(temp_folder,'preds_col1.csv'))
     preds1 = preds1.rename(columns={"0":"Mol1",preds1.columns[1]:"Target1"})
@@ -91,10 +91,33 @@ def evaluate_chemprop_onecol(data,fold_path,chemprop_path):
         os.mkdir(temp_folder)
         
     data.to_csv(os.path.join(temp_folder,'temp.csv'),index=False)
-    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'temp.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_temp.csv'))
+    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'temp.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_temp.csv') + ' > /dev/null')
     preds = pd.read_csv(os.path.join(temp_folder,'preds_temp.csv'))
     
     return preds
 
+def evaluate_chemprop_sol(decoded_path,solvent,fold_path,chemprop_path):
+
+    data = pd.read_csv(decoded_path,header=None,delimiter=' ')
+    temp_folder='tmp'
+    if not os.path.isdir(temp_folder):
+        os.mkdir(temp_folder)
+        
+        
+    data['sol'] = solvent
+    data[[0,'sol']].to_csv(os.path.join(temp_folder,'col1.csv'),index=False)
+    data[[1,'sol']].to_csv(os.path.join(temp_folder,'col2.csv'),index=False)
     
+    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col1.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col1.csv')+' --number_of_molecules 2')
+    
+    os.system('python '+os.path.join(chemprop_path,'predict.py')+' --test_path '+os.path.join(temp_folder,'col2.csv')+' --checkpoint_dir '+fold_path+' --preds_path '+os.path.join(temp_folder,'preds_col2.csv')+' --number_of_molecules 2')
+
+    preds1 = pd.read_csv(os.path.join(temp_folder,'preds_col1.csv'))
+    preds1 = preds1.rename(columns={"0":"Mol1",preds1.columns[2]:"Target1"})
+    preds2 = pd.read_csv(os.path.join(temp_folder,'preds_col2.csv'))
+    preds2 = preds2.rename(columns={"1":"Mol2",preds2.columns[2]:"Target2"})
+    preds_tot = pd.concat((preds1,preds2),axis=1)
+
+    statistics = sum_statistics(preds_tot)
+    return statistics,preds_tot    
     

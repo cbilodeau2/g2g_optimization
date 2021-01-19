@@ -12,6 +12,8 @@ import os
 from g2g_optimization.hgraph import *
 import rdkit
 
+import torch.cuda as cutorch
+
 def gnn_train(tensor_path,vocab_file,model_dir,args,
               load_dir=None,
               load_epoch=-1,
@@ -110,22 +112,52 @@ def gnn_train(tensor_path,vocab_file,model_dir,args,
     total_step = 0
     beta = beta
     meters = np.zeros(6)
-
+    f = open('memory.txt','w')
+    f.close()
     for epoch in range(load_epoch + 1, epoch):
         dataset = DataFolder(tensor_path, batch_size)
 
         for batch in dataset:
             total_step += 1
+            print('Batch:',total_step)
             batch = batch + (beta,)
             model.zero_grad()
+            #print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+
             loss, kl_div, wacc, iacc, tacc, sacc = model(*batch)
+            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
 
             loss.backward()
+            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+            print(loss)
+            
+            f = open("memory.txt", "a")
+            f.write(str(total_step)+'    '+ str(torch.cuda.max_memory_allocated())+'\n')
+            f.close()
+            
+            
+            
             nn.utils.clip_grad_norm_(model.parameters(), clip_norm)
             optimizer.step()
+            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
 
+            
+#             print(type(kl_div))
+#             print(type(wacc))
+#             print(type(iacc))
+#             print(type(tacc))
+#             print(type(sacc))
+#             print(wacc.detach())
+#             print(wacc)
+            wacc = wacc.detach()
+            iacc = iacc.detach()
+            tacc = tacc.detach()
+            sacc = sacc.detach()
             meters = meters + np.array([kl_div, loss.item(), wacc * 100, iacc * 100, tacc * 100, sacc * 100])
-
+            #print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+            #print(cutorch.getMemoryUsage)
+#             print(torch.cuda.memory_summary)
+            
             if total_step % print_iter == 0:
                 meters /= print_iter
                 print("[%d] Beta: %.3f, KL: %.2f, loss: %.3f, Word: %.2f, %.2f, Topo: %.2f, Assm: %.2f, PNorm: %.2f, GNorm: %.2f" % (total_step, beta, meters[0], meters[1], meters[2], meters[3], meters[4], meters[5], param_norm(model), grad_norm(model)))
@@ -137,6 +169,7 @@ def gnn_train(tensor_path,vocab_file,model_dir,args,
                 torch.save(model.state_dict(), model_dir + "/model." + str(n_iter))
                 scheduler.step()
                 print("learning rate: %.6f" % scheduler.get_lr()[0])
+
 
         del dataset
         if save_iter == -1:

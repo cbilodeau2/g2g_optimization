@@ -2,8 +2,8 @@
 
 ## Pair Generation Parameters:
 target = Solubility                 # Title of column in input file
-cutoff = 0.2 #0.8                        # Minimum improvement required to pair x with y
-sample_n = 2 #20
+cutoff = 0.8                        # Minimum improvement required to pair x with y
+sample_n = 20
 remove_tails = False                # Remove top and bottom 1/8 of distribution
 
 ## Tensor Generation Parameters:
@@ -31,5 +31,7 @@ print_iter = 50
 save_iter = -1
 
 ## Iteration Parameters:
-fold_path = predictors/chemprop_aqsol/ #path to chemprop model associated with target improvement
-
+fold_path = predictors/chemprop_aqsol/    # path to chemprop model associated with target improvement
+min_mol_wt = 50                           # g/mol, lower bound for molecule size
+cutoff_iterations = 0.8                   # Typically equal to the previous cuttoff, minimum improvement required for success
+num_decode = 20                           # number of molecules to use to generate a new, larger dataset

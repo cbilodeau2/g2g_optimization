@@ -4,10 +4,11 @@ import networkx as nx
 from .mol_graph import MolGraph
 from .chemutils import *
 from collections import defaultdict
+import numpy as np
 
 class IncBase(object):
 
-    def __init__(self, batch_size, node_fdim, edge_fdim, max_nodes=100, max_edges=200, max_nb=12):
+    def __init__(self, batch_size, node_fdim, edge_fdim, max_nodes=300, max_edges=200, max_nb=12):
         self.max_nb = max_nb
         self.graph = nx.DiGraph()
         self.graph.add_node(0) #make sure node is 1 index
@@ -22,7 +23,8 @@ class IncBase(object):
         idx = len(self.graph)
         self.graph.add_node(idx)
         if feature is not None:
-#             print(idx,len(feature))
+            #print(idx,len(feature))
+#             print(np.shape(self.fnode))
             self.fnode[idx, :len(feature)] = feature
         return idx
 
@@ -56,7 +58,7 @@ class IncBase(object):
 
 class IncTree(IncBase):
 
-    def __init__(self, batch_size, node_fdim, edge_fdim, max_nodes=100, max_edges=200, max_nb=12, max_sub_nodes=20):
+    def __init__(self, batch_size, node_fdim, edge_fdim, max_nodes=300, max_edges=200, max_nb=12, max_sub_nodes=20):
         super(IncTree, self).__init__(batch_size, node_fdim, edge_fdim, max_nodes, max_edges, max_nb)
         self.cgraph = self.fnode.new_zeros(max_nodes * batch_size, max_sub_nodes)
 
@@ -89,7 +91,7 @@ class IncTree(IncBase):
 
 class IncGraph(IncBase):
 
-    def __init__(self, avocab, batch_size, node_fdim, edge_fdim, max_nodes=100, max_edges=300, max_nb=10):
+    def __init__(self, avocab, batch_size, node_fdim, edge_fdim, max_nodes=300, max_edges=300, max_nb=10):
         super(IncGraph, self).__init__(batch_size, node_fdim, edge_fdim, max_nodes, max_edges, max_nb)
         self.avocab = avocab
         self.mol = Chem.RWMol()

@@ -57,6 +57,9 @@ class HierVGNN(nn.Module):
     
     def __init__(self, vocab, atom_vocab, rnn_type, hidden_size, embed_size, batch_size, latent_size, depthT, depthG, diterT, diterG, dropout):
         super(HierVGNN, self).__init__()
+        print('Hidden Size = {}, Embed Size = {}'.format(hidden_size,embed_size))
+        print('depthT Size = {}, depthG Size = {}'.format(depthT,depthG))
+        print('Batch Size = {}'.format(batch_size))
         self.latent_size = latent_size
         self.encoder = HierMPNEncoder(vocab, atom_vocab, rnn_type, embed_size, hidden_size, depthT, depthG, dropout)
         self.decoder = HierMPNDecoder(vocab, atom_vocab, rnn_type, embed_size, hidden_size, hidden_size, diterT, diterG, dropout, attention=True)
