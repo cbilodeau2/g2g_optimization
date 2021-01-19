@@ -56,7 +56,7 @@ def generate_test_sets(data_file,val_path,target='Solubility',cutoff= 0.8, sampl
     if remove_tails_flag:
         data = remove_tails(data,target)
     
-    data = data.sort_values('Solubility')
+    data = data.sort_values(target)
     data['SMILES'] = data['SMILES'].apply(lambda x: x.replace('"', ''))
     
     
