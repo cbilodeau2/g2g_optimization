@@ -208,15 +208,23 @@ def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=
     if remove_tails_flag:
         data = remove_tails(data,target)
 
-    # Generate Dataset object:
-    data_list = []
-    for i in range(0,len(data)):
-        data_list.append(MoleculeDatapoint(smiles = data.iloc[i].values[0], targets = data.iloc[i].values[1]))
-    data_set = MoleculeDataset(data_list)
-
-    # Generate Mapping:
-    scaffold_to_indices = scaffold_to_smiles(data_set.mols(), use_indices=True)
+    data_set = MoleculeDataset([MoleculeDatapoint(smiles=[x],targets=y) for x,y in zip(data['SMILES'].values,data[target].values)])
+    scaffold_to_indices = scaffold_to_smiles([x[0] for x in data_set.mols()], use_indices=True)    
     index_sets = list(scaffold_to_indices.values())
+    
+    
+#     # Generate Dataset object:
+#     data_list = []
+#     for i in range(0,len(data)):
+#         data_list.append(MoleculeDatapoint(smiles = data.iloc[i].values[0], targets = data.iloc[i].values[1]))
+#     data_set = MoleculeDataset(data_list)
+
+#     # Generate Mapping:
+#     try:
+#         scaffold_to_indices = scaffold_to_smiles(data_set.mols(), use_indices=True)
+#         index_sets = list(scaffold_to_indices.values())
+#     except:
+#         raise ValueError(data)
     
     # It seems that we will only lose 16 molecules due to failed scaffold matching
     # But by the time we get the the other side of this bloack we have actually lost like 3000 molecules
@@ -231,7 +239,9 @@ def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=
     for index_set in index_sets:
         i+=1
         print('Starting Scaffold {}'.format(i))
-        smile_list = get_index_smiles(index_set,data_set)    
+        smile_list = get_index_smiles(index_set,data_set)
+        smile_list = [x[0] for x in smile_list]
+        #print(smile_list)
         #print('Len Smile List: ',len(smile_list),len(index_sets))
         
         # There must be at least two molecules in the set for a pair to be made:
