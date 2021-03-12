@@ -3,7 +3,7 @@ import argparse
 import pickle
 import os
 
-from g2g_optimization.train.decode impodecode
+from g2g_optimization.train.decode import decode
 from g2g_optimization.train.args import read_args
 from g2g_optimization.hgraph import common_atom_vocab
 from g2g_optimization.train.evaluate_chemprop import evaluate_chemprop

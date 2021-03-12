@@ -13,7 +13,7 @@ In order to train a model, you must provide a csv file containing two columns. T
 
 ```
 mkdir save_dir
-python train.py --data_path test/aqsol_short --args_file tests/aqsol_short/input.dat --save_dir save_dir
+python train.py --data_path tests/aqsol_short --args_file tests/aqsol_short/input.dat --save_dir save_dir
 ```
 Model/workflow parameters can be adjusted in the argument file, tests/aqsol_short/input.dat.
 
@@ -22,13 +22,13 @@ In addition to simply training the model, you can use the model to translate eve
 
 ```
 mkdir save_dir
-python train_iterations.py --data_path tests/aqsol_short --args_file test/aqsol_short/input.dat --save_dir save_dir --n_iterations 2
+python train_iterations.py --data_path tests/aqsol_short --args_file tests/aqsol_short/input.dat --save_dir save_dir --n_iterations 2
 ```
 ## Model Evaluation:
 ### Translate a given molecule list:
 After training a graph-to-graph translator model, you can input a new list of molecules to produce a set of improved molecules. Using the output of the training example:
 ```
-python evaluate_test.py --test tests/aqsol_short/test.csv --vocab save_dir/inputs/vocab.txt --model save_dir/test/models/model.10 --args_file tests/aqsol_short/input.dat --output_file mols_decoded.csv
+python evaluate_test.py --test tests/aqsol_short/test.csv --vocab save_dir/inputs/vocab.txt --model save_dir/tests/models/model.10 --args_file tests/aqsol_short/input.dat --output_file mols_decoded.csv
 ```
 
 ### Evaluate model performance using a given test set:
