@@ -200,7 +200,7 @@ def drop_invalid_smiles(df):
             df = df[df['SMILES']!=smile]
     return df
 
-def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=None,adjacency_file=None,target='Solubility',cutoff= 0, sample_n=20,remove_tails_flag=False):
+def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=None,adjacency_file=None,target='Solubility',cutoff= 0, sample_n=20,remove_tails_flag=False,sa_constraint=False,sa_cutoff=3.5):
     if constraint_file != None:
         constraints = read_constraints(constraint_file)
     else:
@@ -240,21 +240,24 @@ def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=
     if remove_tails_flag:
         data = remove_tails(data,target)
 
-<<<<<<< HEAD
     if pairing_method == 'bemis_murcko':
         
-        # Generate Dataset object:
-        data_list = []
-        for i in range(0,len(data)):
-            data_list.append(MoleculeDatapoint(smiles = data.iloc[i].values[0], targets = data.iloc[i].values[1]))
-        data_set = MoleculeDataset(data_list)
+#         # Generate Dataset object:
+#         data_list = []
+#         for i in range(0,len(data)):
+#             data_list.append(MoleculeDatapoint(smiles = data.iloc[i].values[0], targets = data.iloc[i].values[1]))
+#         data_set = MoleculeDataset(data_list)
 
-        # Generate Mapping:
-        scaffold_to_indices = scaffold_to_smiles(data_set.mols(), use_indices=True)
+#         # Generate Mapping:
+#         scaffold_to_indices = scaffold_to_smiles(data_set.mols(), use_indices=True)
+#         index_sets = list(scaffold_to_indices.values())
+
+#         # It seems that we will only lose 16 molecules due to failed scaffold matching
+#         # But by the time we get the the other side of this bloack we have actually lost like 3000 molecules
+
+        data_set = MoleculeDataset([MoleculeDatapoint(smiles=[x],targets=y) for x,y in zip(data['SMILES'].values,data[target].values)])
+        scaffold_to_indices = scaffold_to_smiles([x[0] for x in data_set.mols()], use_indices=True)    
         index_sets = list(scaffold_to_indices.values())
-
-        # It seems that we will only lose 16 molecules due to failed scaffold matching
-        # But by the time we get the the other side of this bloack we have actually lost like 3000 molecules
 
         # Generate Pairlist:
         g2g = pd.DataFrame(columns=['X','Y'])
@@ -266,7 +269,8 @@ def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=
         for index_set in index_sets:
             i+=1
             print('Starting Scaffold {}'.format(i))
-            smile_list = get_index_smiles(index_set,data_set)    
+            smile_list = get_index_smiles(index_set,data_set)
+            smile_list = [x[0] for x in smile_list]
             #print('Len Smile List: ',len(smile_list),len(index_sets))
 
             # There must be at least two molecules in the set for a pair to be made:
@@ -290,51 +294,13 @@ def generate_pairs(data_file,outfile,molfile,args,chemprop_path,constraint_file=
 
         g2g[['X','Y']].to_csv(outfile,index=False,header=None,sep=' ')
         mols.to_csv(molfile,index=False,header=None,sep=' ')
-
-=======
-    data_set = MoleculeDataset([MoleculeDatapoint(smiles=[x],targets=y) for x,y in zip(data['SMILES'].values,data[target].values)])
-    scaffold_to_indices = scaffold_to_smiles([x[0] for x in data_set.mols()], use_indices=True)    
-    index_sets = list(scaffold_to_indices.values())
-    
-    
-#     # Generate Dataset object:
-#     data_list = []
-#     for i in range(0,len(data)):
-#         data_list.append(MoleculeDatapoint(smiles = data.iloc[i].values[0], targets = data.iloc[i].values[1]))
-#     data_set = MoleculeDataset(data_list)
-
-#     # Generate Mapping:
-#     try:
-#         scaffold_to_indices = scaffold_to_smiles(data_set.mols(), use_indices=True)
-#         index_sets = list(scaffold_to_indices.values())
-#     except:
-#         raise ValueError(data)
-    
-    # It seems that we will only lose 16 molecules due to failed scaffold matching
-    # But by the time we get the the other side of this bloack we have actually lost like 3000 molecules
-
-    # Generate Pairlist:
-    g2g = pd.DataFrame(columns=['X','Y'])
-    i=0
-    smiles_processed = 0
-    smiles_in_list = 0
-    
-    print('{} Total Scaffolds'.format(len(index_sets)))
-    for index_set in index_sets:
-        i+=1
-        print('Starting Scaffold {}'.format(i))
-        smile_list = get_index_smiles(index_set,data_set)
-        smile_list = [x[0] for x in smile_list]
-        #print(smile_list)
-        #print('Len Smile List: ',len(smile_list),len(index_sets))
->>>>>>> dev
         
         
     elif pairing_method == 'tanimoto':
            
         adj = tan_adjacency(data)
-        if adjacency_file !=None:
-            pickle.dump( [adj,data], open( adjacency_file, "wb" ) )
+#         if adjacency_file !=None:
+#             pickle.dump( [adj,data], open( adjacency_file, "wb" ) )
         
         labels = adjacency_clusters(adj,n_clusters,threshold)
         

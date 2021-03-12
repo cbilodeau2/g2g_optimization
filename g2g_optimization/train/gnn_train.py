@@ -119,27 +119,27 @@ def gnn_train(tensor_path,vocab_file,model_dir,args,
 
         for batch in dataset:
             total_step += 1
-            print('Batch:',total_step)
+#             print('Batch:',total_step)
             batch = batch + (beta,)
             model.zero_grad()
             #print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
 
             loss, kl_div, wacc, iacc, tacc, sacc = model(*batch)
-            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+#             print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
 
             loss.backward()
-            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
-            print(loss)
+#             print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+#             print(loss)
             
-            f = open("memory.txt", "a")
-            f.write(str(total_step)+'    '+ str(torch.cuda.max_memory_allocated())+'\n')
-            f.close()
+#             f = open("memory.txt", "a")
+#             f.write(str(total_step)+'    '+ str(torch.cuda.max_memory_allocated())+'\n')
+#             f.close()
             
             
             
             nn.utils.clip_grad_norm_(model.parameters(), clip_norm)
             optimizer.step()
-            print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
+#             print('Memory Allocation:{},{},{}'.format(torch.cuda.memory_allocated(),torch.cuda.max_memory_allocated(),torch.cuda.memory_allocated()/torch.cuda.max_memory_allocated()))
 
             
 #             print(type(kl_div))
