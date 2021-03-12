@@ -1,0 +1,4 @@
+## File Containing Constraints
+
+constraint1 = {"type": "x", "path": "predictors/chemprop_melt", "threshold": 1, "keep": "above"}
+constraint2 = {"type": "y", "path": "predictors/chemprop_melt", "threshold": 10000, "keep": "below"}

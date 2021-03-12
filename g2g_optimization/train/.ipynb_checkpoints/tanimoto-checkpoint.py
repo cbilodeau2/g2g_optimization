@@ -52,7 +52,7 @@ def tan_adjacency(data):
     fp_pair_gen = ([i,j,(data['fp'].iloc[i],data['fp'].iloc[j])]  for i in range(size-1) for j in range(i,size))
     increasing = True
     for i,indexed_pair in enumerate(fp_pair_gen):
-        print(i)
+#         print(i)
     #     indexed_pair = next(fp_pair_gen)
         x,y,pair = indexed_pair[0],indexed_pair[1],indexed_pair[2]
         adj[x,y] = DataStructs.FingerprintSimilarity(pair[0],pair[1])
